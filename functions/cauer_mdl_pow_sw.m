@@ -35,10 +35,8 @@ function [rth,cth] = cauer_mdl_pow_sw(beta,Lz,x, hs)
 % AUTHOR :          Michael Meiler
 % DATE :      	     05.01.2021
 
-
 rth = zeros(8,1);
 cth = zeros(8,1);
-
 
 beta    = beta/180 * pi;
 tan_b   = tan(beta);
@@ -51,12 +49,12 @@ tan_b   = tan(beta);
 [lambda,cpSic,rohSic] = SiCLut(x(1));
 
 height = Lz(1); % in m
-Lx = 4.896e-3 *2*0.8;    % in m
-Ly = Lx;    % in m
+Lxy = 4.896e-3 *2*0.8;    % in m
+Axy = Lxy^2;    % in m²
 % junction_thickness = 12e-6;     % in m
 
-rthSic  = 1/lambda * height/(Lx*Ly);
-massSic = rohSic*Lx*Ly*height;%*(1-junction_thickness/height);
+rthSic  = 1/lambda * height/(Axy);
+massSic = rohSic*Axy*height;%*(1-junction_thickness/height);
 rth(1) = rthSic;
 cth(1) = massSic*cpSic;
 
@@ -69,14 +67,13 @@ cth(1) = massSic*cpSic;
 
 height = Lz(2); % in m
 
-massSinter  = volumeSquareFrustum(Lx,height,beta) * rohSinter;
-rthSinter   = calcRthFrustum(lambda,Lx,height,beta);
+massSinter  = volume_square_frustum(Lxy,height,beta) * rohSinter;
+rthSinter   = calc_rth_frustum(lambda,Lxy,height,beta);
 rth(2) = rthSinter;
 cth(2) = massSinter*cpSinter;
 
 % Calculate side lengths for the next area.
-Lx = Lx + 2*height*tan_b;	% in m (tan_b is heatspread!)
-Ly = Ly + 2*height*tan_b;   % in m (tan_b is heatspread!)
+Lxy = Lxy + 2*height*tan_b;	% in m (tan_b is heatspread!)
 
 % ==========================================================
 % ----------------  DCB,top specs  -------------------------
@@ -87,14 +84,13 @@ Ly = Ly + 2*height*tan_b;   % in m (tan_b is heatspread!)
 
 height = Lz(3); % in m
 
-massDcbTop  = volumeSquareFrustum(Lx,height,beta) * rohDcbTop;
-rthDcbTop   = calcRthFrustum(lambda,Lx,height,beta);
+massDcbTop  = volume_square_frustum(Lxy,height,beta) * rohDcbTop;
+rthDcbTop   = calc_rth_frustum(lambda,Lxy,height,beta);
 rth(3) = rthDcbTop;
 cth(3) = massDcbTop*cpDcbTop;
 
 % Calculate side lengths for the next area.
-Lx = Lx + 2*height*tan_b;   % in m (tan_b is heatspread!)
-Ly = Ly + 2*height*tan_b;	% in m (tan_b is heatspread!)
+Lxy = Lxy + 2*height*tan_b;   % in m (tan_b is heatspread!)
 
 % ==========================================================
 % ----------------  Ceramic specs  -------------------------
@@ -105,14 +101,13 @@ Ly = Ly + 2*height*tan_b;	% in m (tan_b is heatspread!)
 
 height = Lz(4); % in m
 
-massDcbMid  = volumeSquareFrustum(Lx,height,beta) * rohDcbMid;
-rthDcbMid   = calcRthFrustum(lambda,Lx,height,beta);
+massDcbMid  = volume_square_frustum(Lxy,height,beta) * rohDcbMid;
+rthDcbMid   = calc_rth_frustum(lambda,Lxy,height,beta);
 rth(4) = rthDcbMid;
 cth(4) = massDcbMid*cpDcbMid;
 
 % Calculate side lengths for the next area.
-Lx = Lx + 2*height*tan_b;   % in m (tan_b is heatspread!)
-Ly = Ly + 2*height*tan_b;	% in m (tan_b is heatspread!)
+Lxy = Lxy + 2*height*tan_b;   % in m (tan_b is heatspread!)
 
 % ==========================================================
 % ----------------  DCB,bot specs  -------------------------
@@ -123,14 +118,13 @@ Ly = Ly + 2*height*tan_b;	% in m (tan_b is heatspread!)
 
 height = Lz(5); % in m
 
-massDcbBot  = volumeSquareFrustum(Lx,height,beta) * rohDcbBot;
-rthDcbBot   = calcRthFrustum(lambda,Lx,height,beta);
+massDcbBot  = volume_square_frustum(Lxy,height,beta) * rohDcbBot;
+rthDcbBot   = calc_rth_frustum(lambda,Lxy,height,beta);
 rth(5) = rthDcbBot;
 cth(5) = massDcbBot*cpDcbBot;
 
 % Calculate side lengths for the next area.
-Lx = Lx + 2*height*tan_b;   % in m (tan_b is heatspread!)
-Ly = Ly + 2*height*tan_b;	% in m (tan_b is heatspread!)
+Lxy = Lxy + 2*height*tan_b;   % in m (tan_b is heatspread!)
 
 % ==========================================================
 % ----------------  Solder specs  --------------------------
@@ -141,14 +135,13 @@ Ly = Ly + 2*height*tan_b;	% in m (tan_b is heatspread!)
 
 height = Lz(6); % in m
 
-massSolder  = volumeSquareFrustum(Lx,height,beta) * rohSolder;
-rthSolder   = calcRthFrustum(lambda,Lx,height,beta);
+massSolder  = volume_square_frustum(Lxy,height,beta) * rohSolder;
+rthSolder   = calc_rth_frustum(lambda,Lxy,height,beta);
 rth(6) = rthSolder;
 cth(6) = massSolder*cpSolder;
 
 % Calculate side lengths for the next area.
-Lx = Lx + 2*height*tan_b;   % in m (tan_b is heatspread!)
-Ly = Ly + 2*height*tan_b;	% in m (tan_b is heatspread!)
+Lxy = Lxy + 2*height*tan_b;   % in m (tan_b is heatspread!)
 
 % ==========================================================
 % ----------------  Baseplate Heatsink specs  --------------
@@ -159,14 +152,10 @@ Ly = Ly + 2*height*tan_b;	% in m (tan_b is heatspread!)
 
 height = Lz(7); % in m
 
-massBase = volumeSquareFrustum(Lx,height,beta) * rohBase;
-rthBase  = calcRthFrustum(lambda,Lx,height,beta);
+massBase = volume_square_frustum(Lxy,height,beta) * rohBase;
+rthBase  = calc_rth_frustum(lambda,Lxy,height,beta);
 rth(7) = rthBase;
 cth(7) = massBase*cpBase;
-
-% Calculate side lengths for the next area.
-Lx = Lx + 2*height*tan_b;   % in m (tan_b is heatspread!)
-Ly = Ly + 2*height*tan_b;	% in m (tan_b is heatspread!)
 
 % ==========================================================
 % ----------------  Cooling Liquid Specs  ------------------
@@ -175,13 +164,13 @@ Ly = Ly + 2*height*tan_b;	% in m (tan_b is heatspread!)
 % Coolant specific material constants.
 [~,cpCoolant,rohCoolant] = CoolantLut(x(8));
 
-activeSinkArea  = hs(1); %Lx*Ly*700;
-massCoolLiq     = rohCoolant * hs(2)/1000; % Volume of cooling liq in l
-fr              = hs(3); % l/min
+active_sink_area    = hs(1);
+mass_cool_liq       = rohCoolant * hs(2)/1000; % Volume of cooling liq in l
+fr                  = hs(3); % l/min
 
 alpha = fr/60*cpCoolant;                % Heat Transfer Coefficient in W/K
-cth(8) = cpCoolant*massCoolLiq;      % cp times cooling liquid mass in heatsink % J/K
-rth(8) = 1/(alpha*activeSinkArea);
+cth(8) = cpCoolant*mass_cool_liq;      % cp times cooling liquid mass in heatsink % J/K
+rth(8) = 1/(alpha*active_sink_area);
 
 end
 
