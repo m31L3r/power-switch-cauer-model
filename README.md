@@ -1,4 +1,4 @@
-# power-switch-cauer-model
+# Power Switch State Space Cauer Model
 Power Switch Thermal Cauer Model in State-Space description.
 
 ## References
